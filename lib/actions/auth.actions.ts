@@ -36,24 +36,12 @@ export const signUpWithEmail = async ({
           riskTolerance,
           preferredIndustry,
           balance: 5000,
+          emailVerified: false,
         },
-      }
+      },
+      { upsert: true }
     );
-
-    if (response) {
-      await inngest.send({
-        name: "app/user.created",
-        data: {
-          email,
-          name: fullName,
-          country,
-          investmentGoals,
-          riskTolerance,
-          preferredIndustry,
-        },
-      });
-    }
-    return { success: true, data: response };
+    return { success: true, userId: userId, data: response };
   } catch (e) {
     console.log("Sign up failed", e);
     return { success: false, error: "Sign up failed" };
@@ -67,9 +55,18 @@ export const signInWithEmail = async ({ email, password }: SignInFormData) => {
     });
 
     return { success: true, data: response };
-  } catch (e) {
+  } catch (e: any) {
     console.log("Sign in failed", e);
-    return { success: false, error: "Sign in failed" };
+    
+    let errorMessage = "Invalid email or password";
+    
+    if (e?.body?.message) {
+      errorMessage = e.body.message;
+    } else if (e?.message) {
+      errorMessage = e.message;
+    }
+    
+    return { success: false, error: errorMessage };
   }
 };
 

@@ -1363,3 +1363,65 @@ export const SELL_ORDER_PIN_EMAIL_TEMPLATE = `<!DOCTYPE html>
   </div>
 </body>
 </html>`;
+
+export const VERIFICATION_EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Verification</title>
+  <style>
+    body { margin:0; padding:0; background:radial-gradient(circle at top,#0d0d0d,#000); font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:#f5f5f5; -webkit-font-smoothing:antialiased; }
+    .container { max-width:600px; margin:60px auto; background:rgba(20,20,20,.95); border:1px solid rgba(255,255,255,.05); border-radius:20px; overflow:hidden; backdrop-filter:blur(20px); }
+    .header { text-align:center; padding:50px 30px 20px; background:linear-gradient(135deg,#121212 0%,#0b0b0b 100%); }
+    .header img { width:160px; height:auto; }
+    .section-title { text-align:center; padding:10px 30px 20px; }
+    .section-title h1 { font-size:28px; margin:0 0 6px; color:#E8BA40; font-weight:700; }
+    .section-title p { margin:0; color:#9ca3af; font-size:15px; }
+    .content { padding:40px 40px 20px; }
+    
+    /* Adjusted info box for the verification message */
+    .info { border-left:3px solid #E8BA40; padding:16px 20px; margin-bottom:28px; background:rgba(255,255,255,.02); border-radius:8px; }
+    .info h3 { margin:0 0 10px; color:#f5f5f5; font-size:17px; font-weight:600; }
+    .info p { margin:4px 0; color:#9ca3af; font-size:15px; line-height:1.5; }
+    
+    .cta { text-align:center; margin-top:40px; margin-bottom:40px; }
+    .cta a { display:inline-block; background:linear-gradient(90deg,#E8BA40,#FFD76E); color:#000; padding:16px 36px; border-radius:10px; font-weight:700; font-size:16px; text-decoration:none; transition:all .3s ease; }
+    .cta a:hover { background:linear-gradient(90deg,#FFD76E,#E8BA40); transform:translateY(-1px); }
+    
+    .footer { border-top:1px solid rgba(255,255,255,.08); padding:30px 40px; text-align:center; color:#6b7280; font-size:13px; }
+    .footer a { color:#9ca3af; text-decoration:underline; margin:0 6px; }
+    @media (max-width:600px){ .container{margin:0;border-radius:0;} .content{padding:24px 20px;} .section-title h1{font-size:24px;} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://res.cloudinary.com/dbjgmxt8h/image/upload/v1762515151/stocksy_logo1_jmbh8c.png" alt="Stocksy Logo"/>
+    </div>
+
+    <div class="section-title">
+      <h1>Verify Your Email Address</h1>
+      <p>{{timestamp}}</p>
+    </div>
+
+    <div class="content">
+      <div class="info">
+        <h3>Account Verification Required</h3>
+        <p>Thank you for signing up for Stocksy! To complete your registration and secure your account, please click the button below.</p>
+        <p>If you did not sign up for Stocksy, you can safely ignore this email.</p>
+      </div>
+
+      <div class="cta">
+        <a href="{{url}}">Verify My Email Address</a>
+      </div>
+
+      <div class="footer">
+        <p>This message was sent to verify your email address for account creation.</p>
+        <p><a href="https://stocksy-coral.vercel.app/">Stocksy</a></p>
+        <p>© 2025 Stocksy</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;

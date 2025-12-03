@@ -6,6 +6,7 @@ import {
   SELL_ORDER_PIN_EMAIL_TEMPLATE,
   STOCK_ALERT_LOWER_EMAIL_TEMPLATE,
   STOCK_ALERT_UPPER_EMAIL_TEMPLATE,
+  VERIFICATION_EMAIL_TEMPLATE,
   WELCOME_EMAIL_TEMPLATE,
 } from "./template";
 import { Pin } from "lucide-react";
@@ -196,3 +197,33 @@ export const sendSellOrderPin = async ({
 
   await transporter.sendMail(mailOptions);
 }
+
+export const sendVerificationEmail = async ({
+  email,
+  url,
+  token,
+}: {
+  email: string;
+  url: string;
+  token: string;
+}) => {
+  const now = new Date().toLocaleDateString("en-US", {
+    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  
+  let htmlTemplate = VERIFICATION_EMAIL_TEMPLATE.replace("{{url}}", url);
+  htmlTemplate = htmlTemplate.replace("{{timestamp}}", now);
+
+
+  const mailOptions = {
+    from: `"Stocksyy" <${process.env.NODEMAILER_EMAIL}>`,
+    to: email,
+    subject: "Confirm your Stocksy Account - Email Verification",
+    text: `Click the link to verify your email and complete sign up: ${url}`,
+    html: htmlTemplate,
+  };
+
+  void transporter.sendMail(mailOptions).catch(e => {
+      console.error("Failed to send verification email:", e);
+  });
+};
