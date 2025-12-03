@@ -27,14 +27,21 @@ const SignIn = () => {
     try {
       const result = await signInWithEmail(data);
 
-      if (result.success) {
-        router.push("/");
-      } else {
+      if (!result.success) {
         setError("password", {
           type: "manual",
-          message: "Invalid email or password",
+          message: result.error || "Invalid email or password",
         });
+        
+        toast.error("Sign in failed", {
+          description: result.error || "Invalid email or password",
+        });
+        return;
       }
+
+      toast.success("Welcome back!");
+      router.push("/");
+      
     } catch (e) {
       console.error(e);
       toast.error("Unexpected error", {
@@ -51,13 +58,15 @@ const SignIn = () => {
         <InputField
           name="email"
           label="Email"
-          placeholder="123@gmail.com"
+          placeholder="johndoe@gmail.com"
           register={register}
           error={errors.email}
           validation={{
             required: "Email is required",
-            pattern: /^\w+@\w+\.\w+$/,
-            message: "Email address is required",
+            pattern: {
+              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: "Please enter a valid email"
+            }
           }}
         />
 
@@ -68,10 +77,10 @@ const SignIn = () => {
           type="password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minLength: 8 }}
         />
+        
         <div className="text-right">
-          <a
+          <a          
             href="/forgot-password"
             className="text-sm text-yellow-500 hover:underline"
           >

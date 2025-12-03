@@ -45,20 +45,27 @@ const AccountDetails = ({ user }: AccountDetailsProps) => {
   });
 
   const onSubmit = async (values: any) => {
-    await updateUserProfile(user.id, {
-      fullName: values.fullName,
-      country: values.country,
-      investmentGoals: values.investmentGoals,
-      riskTolerance: values.riskTolerance,
-      preferredIndustry: values.preferredIndustry,
-    });
-
-    // if (values.currentPassword && values.newPassword) {
-    //   await authClient.changePassword({
-    //     currentPassword: values.currentPassword,
-    //     newPassword: values.newPassword,
-    //   });
-    // }
+    try {
+      const res = await updateUserProfile(user.id, {
+        fullName: values.fullName,
+        country: values.country,
+        investmentGoals: values.investmentGoals,
+        riskTolerance: values.riskTolerance,
+        preferredIndustry: values.preferredIndustry,
+      });
+      await new Promise((r) => setTimeout(r, 300));
+      if(res.success){
+        toast.success('Changes saved', {
+          description: 'Changes are saved successfully'
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Error saving changes", {
+        description:
+         e instanceof Error ? e.message : "Error Saving Changes Try Again Later",
+      })
+    }
   };
 
   return (
@@ -78,11 +85,12 @@ const AccountDetails = ({ user }: AccountDetailsProps) => {
           error={errors.fullName}
         />
 
-         <InputField
+        <InputField
           name="email"
           label="Email"
           register={register}
           error={errors.email}
+          disabled
         />
 
         <CountrySelectField
@@ -91,8 +99,6 @@ const AccountDetails = ({ user }: AccountDetailsProps) => {
           error={errors.country}
           label="Country"
         />
-
-       
 
         <SelectField
           name="investmentGoals"
