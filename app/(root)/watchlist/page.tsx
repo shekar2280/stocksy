@@ -24,13 +24,6 @@ const WatchlistPage = async () => {
   }
 
   const symbols = await getWatchlistSymbolsByUserId(user.id);
-
-  const profiles: Record<string, any> = {};
-
-  for (const item of symbols) {
-    profiles[item.s] = await getCompanyProfile(item.s);
-  }
-
   const tickerSymbols = symbols.map((sym) => sym.s);
 
   return (
@@ -70,7 +63,7 @@ const WatchlistPage = async () => {
           <h2 className="text-lg font-semibold mb-4 text-white">
             Your Watchlist
           </h2>
-          <WatchlistList userId={user.id} symbols={symbols} profiles={profiles} />
+          <WatchlistList userId={user.id} symbols={symbols}  />
         </div>
       </div>
     </div>

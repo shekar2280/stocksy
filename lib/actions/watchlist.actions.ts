@@ -5,6 +5,16 @@ import { Watchlist } from "@/database/models/watchlist.models";
 import { connectToDB } from "@/database/mongoose";
 import { auth } from "../better-auth/auth";
 import { headers } from "next/headers";
+import { getCompanyProfile } from "./finnhub.actions";
+
+interface WatchlistPopulatedItem {
+    stockId: { 
+        _id: string;
+        symbol: string; 
+        company: string; 
+        logoUrl?: string; 
+    };
+}
 
 function normalizeWatchlistItemToTradingView(item: {
   symbol?: string;
@@ -20,7 +30,7 @@ function normalizeWatchlistItemToTradingView(item: {
 
 export async function getWatchlistSymbolsByUserId(
   userId: string
-): Promise<Array<{ s: string; d: string }>> {
+): Promise<Array<{ s: string; d: string, logoUrl?: string }>> {
   const session = await auth.api.getSession({ headers: await headers() });
   const realUser = session?.user;
   if (!realUser) throw new Error("Unauthorized");
@@ -33,17 +43,20 @@ export async function getWatchlistSymbolsByUserId(
     if (!db) throw new Error("MongoDB connection not found");
 
     const items = (await Watchlist.find({ userId })
-      .populate("stockId", "symbol company")
-      .lean()) as unknown as Array<{
-      stockId: { symbol: string; company: string };
-    }>;
+      .populate("stockId", "symbol company logoUrl")
+      .lean()) as unknown as Array<WatchlistPopulatedItem>;
 
-    return items.map((i) =>
-      normalizeWatchlistItemToTradingView({
+    return items.map((i) => {
+      const normalized = normalizeWatchlistItemToTradingView({
         symbol: i.stockId.symbol,
         company: i.stockId.company,
-      })
-    );
+      });
+
+      return{
+        ...normalized,
+        logoUrl: i.stockId.logoUrl,
+      };
+  });
   } catch (err) {
     console.error("getWatchlistSymbolsByUserId error:", err);
     return [];
@@ -67,9 +80,12 @@ export async function addToWatchlist(
 
   if (!db) throw new Error("MongoDB connection not found");
 
+  const profiles = await getCompanyProfile(symbol);
+  const logoUrl = profiles?.logo; 
+
   const stock = await Stock.findOneAndUpdate(
     { symbol },
-    { symbol, company, exchange: "UNKNOWN" },
+    { symbol, company, exchange: "UNKNOWN", logoUrl: logoUrl },
     { upsert: true, new: true }
   );
 

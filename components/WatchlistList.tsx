@@ -7,14 +7,12 @@ import { useRouter } from "next/navigation";
 
 interface WatchlistListProps {
   userId: string;
-  symbols: { s: string; d: string }[];
-  profiles: Record<string, any>;
+  symbols: { s: string; d: string; logoUrl?: string }[];
 }
 
 export default function WatchlistList({
   userId,
   symbols,
-  profiles = {},
 }: WatchlistListProps) {
   const router = useRouter();
   const handleDelete = async (symbol: string) => {
@@ -41,7 +39,6 @@ export default function WatchlistList({
   return (
     <ul className="space-y-3">
       {symbols.map((stock) => {
-        const profile = profiles[stock.s];
 
         return (
           <li key={stock.s}>
@@ -50,9 +47,9 @@ export default function WatchlistList({
                 href={`/stocks/${stock.s}`}
                 className="flex-1 min-w-0 flex items-center gap-3"
               >
-                {profile?.logo && (
+                {stock?.logoUrl && (
                   <img
-                    src={profile.logo}
+                    src={stock.logoUrl}
                     alt={stock.d}
                     className="w-6 h-6 rounded-full border border-gray-300"
                   />
