@@ -281,12 +281,21 @@ export async function getCompanyProfile(
 ): Promise<CompanyProfile | null> {
   const key = `profile:${symbol}`;
 
-  const cached = await redis.get<CompanyProfile>(key);
-  if (cached) return cached;
+  try {
+    const cached = await redis.get<CompanyProfile>(key);
+    if (cached) return cached;
+  } catch (error) {
+    console.error("Redis Cache GET Error:", error);
+  }
 
   const fresh = await fetchCompanyProfile(symbol);
+  
   if (fresh) {
-    await redis.set(key, fresh, { ex: TTL });
+    try {
+      await redis.set(key, fresh, { ex: TTL });
+    } catch (error) {
+      console.error("Redis Cache SET Error:", error);
+    }
   }
 
   return fresh;
